@@ -1,4 +1,4 @@
-# haircut-reservation
+# 理发预约系统
 简易理发预约系统（Spring+SpringMVC+Mybatis）
 
 功能：
