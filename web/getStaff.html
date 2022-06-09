@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh">
+    <head>
+        <meta charset="UTF-8">
+        <title>理发预约系统</title>
+        <link rel="stylesheet" href="css/style.css">
+        <script src="js/jquery-1.11.0.min.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <div>
+            <h1 class="p_title">理发预约系统</h1>
+        </div>
+        <div class="mdiv">
+            <p class="p_head">预约</p>
+            <div style="float: left; margin-right: 10%;">
+                编号<br/>
+                姓名<br/>
+                剩余预约名额
+            </div>
+            <div style="float: left;">
+                <label id="id"></label><br/>
+                <label id="name"></label><br/>
+                <label id="stock"></label>
+            </div>
+            <div style="clear:both;">
+                <button class="button" id="createorder" type="submit">预约</button>
+            </div>
+            <div style="clear:both;">
+                <a href="listStaff.html"><button class="button_back" type="submit">返回</button></a>
+            </div>
+        </div>
+    </body>
+    <script>
+        var g_staffVO = {};
+        jQuery(document).ready(function(){
+            $("#createorder").on("click",function(){
+                $.ajax({
+                type:"POST",
+                contentType:"application/x-www-form-urlencoded",
+                url:"http://localhost:8092/order/createorder",
+                data:{
+                    "staffId":g_staffVO.id,
+                },
+                xhrFields:{withCredentials:true},
+                success:function(data){
+                    if(data.status == "success"){
+                        alert("预约成功");
+                        window.location.reload();
+                    }else{
+                        alert("预约失败，因为"+data.data.errMsg);
+                    }
+                },
+                error:function(data){
+                    alert("预约失败，原因为" + data.responseText);
+                }
+            });
+            })
+
+            //获取商品详情
+            $.ajax({
+                type:"GET",
+                contentType:"application/x-www-form-urlencoded",
+                url:"http://localhost:8092/staff/get",
+                data:{
+                    "id":getParam("id"),
+                },
+                xhrFields:{withCredentials:true},
+                success:function(data){
+                    if(data.status == "success"){
+                        g_staffVO = data.data;
+                        reloadDom();
+                    }else{
+                        alert("获取信息失败，因为"+data.data.errMsg);
+                    }
+                },
+                error:function(data){
+                    alert("获取信息失败，原因为" + data.responseText);
+                }
+            });
+        });
+        function getParam(paramName) {
+            paramValue = "", isFound = !1;
+            if (this.location.search.indexOf("?") == 0 && this.location.search.indexOf("=") > 1) {
+                arrSource = unescape(this.location.search).substring(1, this.location.search.length).split("&"), i = 0;
+                while (i < arrSource.length && !isFound) arrSource[i].indexOf("=") > 0 && arrSource[i].split("=")[0].toLowerCase() == paramName.toLowerCase() && (paramValue = arrSource[i].split("=")[1], isFound = !0), i++
+            }
+            return paramValue == "" && (paramValue = null), paramValue
+        }
+        function reloadDom(){
+            $("#id").text(g_staffVO.id);
+            $("#name").text(g_staffVO.name);
+            $("#stock").text(g_staffVO.stock);
+        }
+    </script>
+</html>

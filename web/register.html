@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh">
+    <head>
+        <meta charset="UTF-8">
+        <title>理发预约系统</title>
+        <link rel="stylesheet" href="css/style.css">
+        <script src="js/jquery-1.11.0.min.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <div>
+            <h1 class="p_title">理发预约系统</h1>
+        </div>
+        <div class="mdiv">
+            <p class="p_head">注册</p>
+            <!-- <div class="div_input">
+                编号
+                <input class="input" type="text" name="id" id="id" autocomplete="off">
+            </div> -->
+            <div class="div_input">
+                姓名
+                <input class="input" type="text" name="name" id="name" autocomplete="off">
+            </div>
+            <div class="div_input">
+                电话
+                <input class="input" type="text" name="telephone" id="telephone" autocomplete="off">
+            </div>
+            <div class="div_input">
+                密码
+                <input class="input" type="password" name="password" id="password">
+            </div>
+            <div style="clear:both;">
+                <button class="button" id="register" type="submit">注册</button>
+            </div>
+            <a href="login.html" style="float: right; margin-top: 5%;">登录到账号</a>
+        </div>
+    </body>
+    <script>
+        jQuery(document).ready(function(){
+            $("#register").on("click", function(){
+                var name = $("#name").val();
+                var telephone = $("#telephone").val();
+                var password = $("#password").val();
+                if (name == null || name == "") {
+                    alert("姓名不能为空");
+                    return;
+                }
+                if (telephone == null || telephone == "") {
+                    alert("电话不能为空");
+                    return;
+                }
+                if (telephone.length != 11) {
+                    alert("电话长度不合法");
+                    return;
+                }
+                if (password == null || password == "") {
+                    alert("密码不能为空");
+                    return;
+                }
+                $.ajax({
+                    type:"POST",
+                    contentType:"application/x-www-form-urlencoded",
+                    url:"http://localhost:8092/user/register",
+                    data:{
+                        "name":name,
+                        "telephone":telephone,
+                        "password":password
+                    },
+                    // xhrFields:{withCredentials:true},
+                    success:function(data){
+                        if(data.status=="success"){
+                            alert("注册成功");
+                            window.location.href="login.html";
+                        }else{
+                            alert("注册失败，因为"+data.data.errMsg);
+                        }
+                    },
+                    error:function(data){
+                        alert("注册失败，因为"+data.responseText);
+                    }
+                });
+                return false;
+            });
+        });
+    </script>
+</html>

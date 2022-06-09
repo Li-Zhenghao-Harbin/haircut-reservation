@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh">
+    <head>
+        <meta charset="UTF-8">
+        <title>理发预约系统</title>
+        <link rel="stylesheet" href="css/style.css">
+        <script src="js/jquery-1.11.0.min.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <div>
+            <h1 class="p_title">理发预约系统</h1>
+        </div>
+        <div class="mdiv">
+            <p class="p_head">查看订单</p>
+            <table style="width:100%;">
+                <thead>
+                    <tr>
+                        <th>订单号</th>
+                        <th>预定者编号</th>
+                        <th>理发师编号</th>
+                    </tr>
+                </thead>
+                <tbody id="container" style="text-align: center; background-color: aliceblue;">
+
+                </tbody>
+            </table>
+            <div>
+                <p id="count" style="float:right;"></p>
+            </div>
+            <div style="clear:both;">
+                <a href="login.html"><button class="button_back" type="submit">退出</button></a>
+            </div>
+        </div>
+    </body>
+    <script>
+        var g_orderList = [];
+        jQuery(document).ready(function(){
+            $.ajax({
+                type:"GET",
+                url:"http://localhost:8092/order/list",
+                xhrFields:{withCredentials:true},
+                success:function(data){
+                    if (data.status=="success") {
+                        g_orderList = data.data;
+                        reloadDom();
+                    }else{
+                        alert("获取订单信息失败，因为 "+data.responseText);
+                    }
+                },
+                error:function(data){
+                    alert("获取订单信息失败，因为 "+data.responseText);
+                }
+            });
+        });
+        function reloadDom() {
+            for (var i = 0; i < g_orderList.length; i++) {
+                var orderVO = g_orderList[i];
+                var dom = "<tr data-id='"+orderVO.id+"' id='staffDetail"+orderVO.id+"'><td>"+orderVO.id+"</td><td>"+orderVO.userId+"</td><td>"+orderVO.staffId+"</td></tr>";
+                $("#container").append($(dom));
+                $("#count").text("共"+g_orderList.length+"份订单");
+            }
+        }
+    </script>
+</html>

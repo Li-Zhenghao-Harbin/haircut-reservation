@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh">
+    <head>
+        <meta charset="UTF-8">
+        <title>理发预约系统</title>
+        <link rel="stylesheet" href="css/style.css">
+        <script src="js/jquery-1.11.0.min.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <div>
+            <h1 class="p_title">理发预约系统</h1>
+        </div>
+        <div class="mdiv">
+            <p class="p_head">添加理发师</p>
+            <div class="div_input">
+                姓名
+                <input class="input" type="text" name="name" id="name" autocomplete="off">
+            </div>
+            <div style="clear:both;">
+                <button class="button" id="add" type="submit">添加</button>
+            </div>
+            <div style="clear:both;">
+                <a href="login.html"><button class="button_back" type="submit">退出</button></a>
+            </div>
+        </div>
+    </body>
+    <script>
+        jQuery(document).ready(function(){
+            $("#add").on("click", function(){
+                var name = $("#name").val();
+                if (name == null || name == "") {
+                    alert("姓名不能为空");
+                    return;
+                }
+                $.ajax({
+                    type:"POST",
+                    contentType:"application/x-www-form-urlencoded",
+                    url:"http://localhost:8092/staff/add",
+                    data:{
+                        "name":name,
+                    },
+                    // xhrFields:{withCredentials:true},
+                    success:function(data){
+                        if(data.status == "success"){
+                            alert("添加成功");
+                        }else{
+                            alert("添加失败，因为"+data.data.errMsg);
+                        }
+                    },
+                    error:function(data){
+                        alert("添加失败，因为" + data.responseText);
+                    }
+                });
+                return false;
+            });
+        });
+    </script>
+</html>

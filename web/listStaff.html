@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh">
+    <head>
+        <meta charset="UTF-8">
+        <title>理发预约系统</title>
+        <link rel="stylesheet" href="css/style.css">
+        <script src="js/jquery-1.11.0.min.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <div>
+            <h1 class="p_title">理发预约系统</h1>
+        </div>
+        <div class="mdiv">
+            <p class="p_head" id="hello"></p>
+            <p class="p_head">请点击选择理发师</p>
+            <table style="width:100%;">
+                <thead>
+                    <tr>
+                        <th>编号</th>
+                        <th>姓名</th>
+                        <th>剩余预约数</th>
+                    </tr>
+                </thead>
+                <tbody id="container" style="text-align: center; background-color: aliceblue; cursor: pointer;">
+
+                </tbody>
+            </table>
+            <div style="clear:both;">
+                <a href="login.html"><button class="button_back" type="submit">退出</button></a>
+            </div>
+        </div>
+    </body>
+    <script>
+        var g_staffList = [];
+        jQuery(document).ready(function(){
+            $.ajax({
+                type:"GET",
+                url:"http://localhost:8092/staff/list",
+                xhrFields:{withCredentials:true},
+                success:function(data){
+                    if (data.status=="success") {
+                        g_staffList = data.data;
+                        reloadDom();
+                    }else{
+                        alert("获取理发师信息失败，因为 "+data.responseText);
+                    }
+                },
+                error:function(data){
+                    alert("获取理发师信息失败，因为 "+data.responseText);
+                }
+            });
+            $(document).ready(function(){
+                $.ajax({
+                    type:"POST",
+                    contentType:"application/x-www-form-urlencoded",
+                    url:"http://localhost:8092/user/request",
+                    xhrFields:{withCredentials:true},
+                    success:function(data){
+                        if (data.data.errCode == 20003) {
+                            alert("用户未登录");
+                            window.location.href="login.html";
+                        }
+                        $("#hello").html("您好，"+data.data.name);
+                    },
+                    error:function(data){
+                        alert("异常，因为 "+data.responseText);
+                    }
+                });
+                return false;
+            });
+
+        });
+        function reloadDom() {
+            for (var i = 0; i < g_staffList.length; i++) {
+                var staffVO = g_staffList[i];
+                var dom = "<tr data-id='"+staffVO.id+"' id='staffDetail"+staffVO.id+"'><td>"+staffVO.id+"</td><td>"+staffVO.name+"</td><td>"+staffVO.stock+"</td></tr>";
+                $("#container").append($(dom));
+                $("#staffDetail"+staffVO.id).on("click",function(e){
+                    window.location.href="getStaff.html?id="+$(this).data("id");
+                });
+            }
+        }
+    </script>
+</html>
